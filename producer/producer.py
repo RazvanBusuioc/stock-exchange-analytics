@@ -4,7 +4,7 @@ from config import Config
 import json
 
 class Producer:
-    
+
     def __init__(self) -> None:
         self.api = API()
         self.kafka_producer = KafkaProducer(bootstrap_servers=Config.KAFKA_HOST + ':' + str(Config.KAFKA_PORT),
@@ -18,7 +18,7 @@ class Producer:
                 topic = 'finance.' + symbol
                 self.kafka_producer.send(topic, data[symbol])
                 self.kafka_producer.flush()
-                message = 'Produced message on topic {}.'.format(topic)
+                message = 'Produced message on topic {}'.format(topic)
                 print(message)
             print()
             
