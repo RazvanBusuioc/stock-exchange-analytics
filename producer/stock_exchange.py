@@ -15,6 +15,15 @@ def get_stock_exchange_data_for_symbol(company_symbol):
     res = requests.get(
         Config.STOCK_API_URL + company_symbol, 
         headers = Config.STOCK_API_USER_AGENT_HEADER, 
-        params  = {'modules' : 'financialData'}
+        params  = {'modules' : 'financialData,assetProfile'}
     )
-    return res.json()['quoteSummary']['result'][0]['financialData']
+    financialData = res.json()['quoteSummary']['result'][0]['financialData']
+
+    res = requests.get(
+        Config.COMPANY_NAME_API_URL,
+        headers = Config.STOCK_API_USER_AGENT_HEADER, 
+        params  = {'q' : company_symbol}
+    )
+    financialData['companyName'] = res.json()['quotes'][0]['shortname']
+    
+    return financialData
