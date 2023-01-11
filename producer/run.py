@@ -1,9 +1,8 @@
-from producer import init_producer, produce_data_loop
+from producer import Producer
 
 def main():
-    producer = init_producer()
-    produce_data_loop(producer)
-    
+    producer = Producer()
+    producer.produce_data_loop()
 
 if __name__ == "__main__":
     main()
