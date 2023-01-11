@@ -1,6 +1,8 @@
 import requests
+import time
 from companies import companies_symbols
 from config import Config
+from datetime import datetime
 
 # call stock exchange API for all the companies
 # return a dict structured like this: { company_symbol: json_data_for_company }
@@ -17,13 +19,13 @@ def get_stock_exchange_data_for_symbol(company_symbol):
         headers = Config.STOCK_API_USER_AGENT_HEADER, 
         params  = {'modules' : 'financialData,assetProfile'}
     )
-    financialData = res.json()['quoteSummary']['result'][0]['financialData']
+    stockData = res.json()['quoteSummary']['result'][0]['financialData']
 
     res = requests.get(
         Config.COMPANY_NAME_API_URL,
         headers = Config.STOCK_API_USER_AGENT_HEADER, 
         params  = {'q' : company_symbol}
     )
-    financialData['companyName'] = res.json()['quotes'][0]['shortname']
-    
-    return financialData
+    stockData['companyName'] = res.json()['quotes'][0]['shortname']
+    stockData['time'] = datetime.fromtimestamp(time.time()).strftime("%d-%m-%Y, %H:%M:%S")
+    return stockData
