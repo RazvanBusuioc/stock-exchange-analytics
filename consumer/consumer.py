@@ -7,8 +7,11 @@ import time
 class Consumer:
     def __init__(self) -> None:
         self.elastic_proxy = ElasticProxy()
-        self.kafka_consumer = KafkaConsumer(bootstrap_servers=Config.KAFKA_HOST + ':' + str(Config.KAFKA_PORT),
-                             value_deserializer=lambda data: loads(data.decode('utf-8')))
+        self.kafka_consumer = KafkaConsumer(
+            bootstrap_servers=Config.KAFKA_HOST + ':' + str(Config.KAFKA_PORT),
+            value_deserializer=lambda data: loads(data.decode('utf-8')),
+            auto_offset_reset='earliest'
+        )
         print('Kafka Consumer has been initiated...')
     
     def subscribe(self, topics):

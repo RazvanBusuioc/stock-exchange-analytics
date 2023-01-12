@@ -3,7 +3,7 @@ from topics import topics
 import time
 
 def main():
-    time.sleep(10)
+    time.sleep(20) # Messages should already be posted on those topics
     consumer = Consumer()
     consumer.subscribe(topics)
     consumer.consume_data_loop()
