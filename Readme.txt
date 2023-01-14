@@ -8,7 +8,6 @@
 TO DOS
 Need to Have:
 - add ES indexing on consumer
-- Kibana linked with ES
 
 Nice to have:
 - Kafka Auth
