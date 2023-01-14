@@ -101,16 +101,33 @@ services:
       CONNECT_PLUGIN_PATH: ' /usr/share/java/'
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
     environment:
-      - ELASTIC_PASSWORD=elastic-password
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - ELASTIC_PASSWORD=elastic-password
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
       - 9300:9300
+    networks: ['kibana-elastic']
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.0
+    environment:
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic-password
+    ports: ['5601:5601']
+    networks: ['kibana-elastic']
+    links: ['elasticsearch']
+    depends_on: ['elasticsearch']
 
   producer:
     build:
@@ -132,3 +149,6 @@ services:
       KAFKA_HOST: 'kafka'
       KAFKA_PORT: 9092
     restart: always
+
+networks:
+  kibana-elastic: {}
