@@ -31,6 +31,8 @@ services:
     links:
       - kafka
       - schema-registry
+    networks:
+      - api-batch
 
   zookeeper:
     image: confluentinc/cp-zookeeper
@@ -40,6 +42,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: '2181'
       ZOOKEEPER_ADMIN_ENABLE_SERVER: 'false'
+    networks:
+      - api-batch
 
   kafka:
     image: confluentinc/cp-kafka
@@ -61,6 +65,9 @@ services:
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: 'true'
     links:
       - zookeeper
+    networks:
+      - api-batch
+    restart: always
 
   schema-registry:
     image: confluentinc/cp-schema-registry
@@ -72,6 +79,8 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: 'schema-registry'
       SCHEMA_REGISTRY_LISTENERS: 'http://0.0.0.0:8085'
       SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: 'INFO'
+    networks:
+      - api-batch
 
   connect:
     image: confluentinc/cp-kafka-connect
@@ -99,6 +108,8 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '1'
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '1'
       CONNECT_PLUGIN_PATH: ' /usr/share/java/'
+    networks:
+      - api-batch
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
@@ -117,7 +128,7 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
-    networks: ['kibana-elastic']
+    networks: ['kibana-elastic', 'elastic-consumer']
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.9.0
@@ -137,6 +148,8 @@ services:
     environment:
       KAFKA_HOST: 'kafka'
       KAFKA_PORT: 9092
+    networks:
+      - api-batch
     restart: always
 
   consumer:
@@ -148,7 +161,14 @@ services:
     environment:
       KAFKA_HOST: 'kafka'
       KAFKA_PORT: 9092
+      ELASTIC_HOST: 'elasticsearch'
+      ELASTIC_PORT: 9200
+    networks:
+      - elastic-consumer
+      - api-batch
     restart: always
 
 networks:
   kibana-elastic: {}
+  elastic-consumer: {}
+  api-batch: {}
