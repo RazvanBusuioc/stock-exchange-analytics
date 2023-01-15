@@ -1,7 +1,9 @@
 from elasticsearch import Elasticsearch
+from elasticsearch import RequestsHttpConnection
 
 # use this for testing ES connection
-es = Elasticsearch(["http://localhost:9200"], basic_auth=("elastic", "elastic-password"), verify_certs=False)
+es = Elasticsearch(["http://elastic:elastic-password@127.0.0.1:9200"], verify_certs=False)
+
 if es.ping():
     print('Yay Connect')
 else:

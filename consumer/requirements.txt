@@ -1,2 +1,2 @@
 kafka-python
-elasticsearch
+elasticsearch==7.13.4
