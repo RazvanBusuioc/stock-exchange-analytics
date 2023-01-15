@@ -1,16 +1,22 @@
 from elasticsearch import Elasticsearch
 from config import Config
+import time
 
 class ElasticProxy:
     def __init__(self) -> None:
         print(f"http://{Config.ELASTIC_USER}:{Config.ELASTIC_PASSWORD}@{Config.ELASTIC_HOST}:{Config.ELASTIC_PORT}")
         self.es = Elasticsearch([f"http://{Config.ELASTIC_USER}:{Config.ELASTIC_PASSWORD}@{Config.ELASTIC_HOST}:{Config.ELASTIC_PORT}"], verify_certs=False)
-        print(self.es.info())
+        time.sleep(3)
         if self.es.ping():
             print('Yay Connected to Elasticsearch')
         else:
             print('Awww it could not connect to Elasticsearch!')
-        self.indexes = set()
+            raise Exception("Awww it could not connect to Elasticsearch!")
+        self.indexes = ["finance.aapl", "finance.amzn", "finance.googl", "finance.intc", "finance.meta", "finance.msft", "finance.nflx", "finance.tsla"]
+        for index in self.indexes:
+            if not self.es.indices.exists(index=index):
+                self.es.indices.create(index=index)
+        print("Elasticsearch indexes created")
 
     def store_message(self, message):
         print(message[0])
@@ -18,9 +24,5 @@ class ElasticProxy:
         print(type(message[6]))
         index = message[0]
         doc = message[6]
-        if index not in self.indexes:
-            if not self.es.indices.exists(index=index):
-                self.es.indices.create(index=index)
-            self.indexes.add(index)
         resp = self.es.index(index=index, body=doc)
         print(resp['result'])
