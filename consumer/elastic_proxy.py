@@ -12,7 +12,7 @@ class ElasticProxy:
         else:
             print('Awww it could not connect to Elasticsearch!')
             raise Exception("Awww it could not connect to Elasticsearch!")
-        self.indexes = ["finance.aapl", "finance.amzn", "finance.googl", "finance.intc", "finance.meta", "finance.msft", "finance.nflx", "finance.tsla"]
+        self.indexes = ["finance.cnp", "finance.aep", "finance.aee", "finance.dte", "finance.etr", "finance.cms", "finance.fe", "finance.exc"]
         for index in self.indexes:
             if not self.es.indices.exists(index=index):
                 self.es.indices.create(index=index)
